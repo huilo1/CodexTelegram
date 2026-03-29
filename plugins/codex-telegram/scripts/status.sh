@@ -9,14 +9,13 @@ if tracked_pid="$(get_tracked_bot_pid)"; then
   ps -fp "$tracked_pid"
 else
   rm -f "$pid_file"
-  echo "Not running."
-fi
-
-mapfile -t all_pids < <(pgrep -af "$process_pattern" || true)
-if [[ "${#all_pids[@]}" -gt 1 ]]; then
-  echo
-  echo "Duplicate local bot processes detected:"
-  printf '%s\n' "${all_pids[@]}"
+  mapfile -t all_pids < <(pgrep -af "$process_pattern" || true)
+  if [[ "${#all_pids[@]}" -gt 0 ]]; then
+    echo "Tracked PID missing, but found running bot process:"
+    printf '%s\n' "${all_pids[@]}"
+  else
+    echo "Not running."
+  fi
 fi
 
 echo
