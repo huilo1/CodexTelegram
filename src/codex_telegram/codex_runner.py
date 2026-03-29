@@ -87,13 +87,14 @@ class CodexRunner:
             raise
 
     def _build_command(self, session: ChatSession) -> list[str]:
-        base = ["codex", "exec"]
+        base = ["codex"]
         if self.settings.codex_model:
             base.extend(["--model", self.settings.codex_model])
         if self.settings.codex_profile:
             base.extend(["--profile", self.settings.codex_profile])
         if self.settings.codex_enable_web_search:
             base.append("--search")
+        base.append("exec")
         if session.thread_id:
             base.extend(
                 [
