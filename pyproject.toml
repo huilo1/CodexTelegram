@@ -1,0 +1,31 @@
+[project]
+name = "codex-telegram"
+version = "0.1.0"
+description = "Telegram bot for remote Codex CLI access"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "pydantic>=2.7,<3.0",
+    "pydantic-settings>=2.2,<3.0",
+    "python-telegram-bot[job-queue]>=22.0,<23.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0,<9.0",
+    "pytest-asyncio>=0.23,<1.0",
+]
+
+[project.scripts]
+codex-telegram-bot = "codex_telegram.main:run"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/codex_telegram"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"

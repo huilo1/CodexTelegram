@@ -1,0 +1,15 @@
+[Unit]
+Description=Codex Telegram Bot
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/angel/projects/CodexTelegram
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/home/angel/projects/CodexTelegram/.venv/bin/codex-telegram-bot
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,9 @@
+.env
+.venv/
+.pytest_cache/
+.codex-telegram/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.DS_Store
