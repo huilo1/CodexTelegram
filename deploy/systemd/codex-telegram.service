@@ -1,0 +1,15 @@
+[Unit]
+Description=Codex Telegram Bot
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/projects/CodexTelegram
+Environment=PYTHONUNBUFFERED=1
+ExecStart=%h/projects/CodexTelegram/.venv/bin/codex-telegram-bot --env-file %h/projects/CodexTelegram/.env
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target

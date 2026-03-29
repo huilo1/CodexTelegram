@@ -1,0 +1,40 @@
+{
+  "name": "codex-telegram",
+  "version": "0.1.0",
+  "description": "Telegram bridge for driving the local Codex CLI from a private chat.",
+  "author": {
+    "name": "Oleg Kapitonov",
+    "email": "local-only@example.invalid",
+    "url": "https://github.com/bnetangel"
+  },
+  "homepage": "https://github.com/bnetangel",
+  "repository": "https://github.com/bnetangel",
+  "license": "MIT",
+  "keywords": [
+    "telegram",
+    "codex",
+    "development",
+    "remote"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Codex Telegram",
+    "shortDescription": "Run Codex through a private Telegram chat.",
+    "longDescription": "Repo-local plugin wrapping a Telegram bot that forwards tasks into the local Codex CLI, persists Codex thread IDs, and supports safe working-directory changes plus cancellation and timeout handling.",
+    "developerName": "Oleg Kapitonov",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/bnetangel",
+    "privacyPolicyURL": "https://github.com/bnetangel",
+    "termsOfServiceURL": "https://github.com/bnetangel",
+    "defaultPrompt": [
+      "Set up the Telegram bridge for this repo.",
+      "Show how to start or stop the Telegram bot.",
+      "Explain the current Codex Telegram architecture."
+    ],
+    "brandColor": "#1F8B4C"
+  }
+}
