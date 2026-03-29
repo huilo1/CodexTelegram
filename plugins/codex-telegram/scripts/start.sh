@@ -5,7 +5,7 @@ source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/common.sh"
 cd "$app_root"
 
 mapfile -t existing_pids < <(pgrep -f "$process_pattern" || true)
-if [[ -f "$pid_file" ]] && kill -0 "$(cat "$pid_file")" >/dev/null 2>&1; then
+if tracked_pid="$(get_tracked_bot_pid)"; then
   echo "Codex Telegram bot is already running."
   exit 0
 fi
@@ -26,7 +26,7 @@ pid=$!
 echo "$pid" > "$pid_file"
 sleep 2
 
-if ! kill -0 "$pid" >/dev/null 2>&1; then
+if ! is_bot_pid "$pid"; then
   echo "Codex Telegram bot failed to stay running." >&2
   rm -f "$pid_file"
   echo >&2

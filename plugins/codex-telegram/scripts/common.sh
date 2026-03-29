@@ -16,3 +16,33 @@ if [[ ! -f "$app_root/pyproject.toml" || ! -d "$app_root/src/codex_telegram" ]];
 fi
 
 mkdir -p "$runtime_dir"
+
+is_bot_pid() {
+  local pid="${1:-}"
+  [[ -n "$pid" ]] || return 1
+  kill -0 "$pid" >/dev/null 2>&1 || return 1
+
+  local args
+  args="$(ps -p "$pid" -o args= 2>/dev/null || true)"
+  [[ -n "$args" ]] || return 1
+  [[ "$args" =~ $process_pattern ]]
+}
+
+read_pid_file() {
+  [[ -f "$pid_file" ]] || return 1
+
+  local pid
+  pid="$(<"$pid_file")"
+  [[ "$pid" =~ ^[0-9]+$ ]] || return 1
+  printf '%s\n' "$pid"
+}
+
+get_tracked_bot_pid() {
+  local pid
+  pid="$(read_pid_file 2>/dev/null || true)"
+  if [[ -n "$pid" ]] && is_bot_pid "$pid"; then
+    printf '%s\n' "$pid"
+    return 0
+  fi
+  return 1
+}

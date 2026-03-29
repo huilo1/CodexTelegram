@@ -5,9 +5,11 @@ source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/common.sh"
 
 stopped_any=0
 
-if [[ -f "$pid_file" ]] && kill -0 "$(cat "$pid_file")" >/dev/null 2>&1; then
-  kill "$(cat "$pid_file")" >/dev/null 2>&1 || true
+if tracked_pid="$(get_tracked_bot_pid)"; then
+  kill "$tracked_pid" >/dev/null 2>&1 || true
   stopped_any=1
+else
+  rm -f "$pid_file"
 fi
 
 mapfile -t stray_pids < <(pgrep -f "$process_pattern" || true)
