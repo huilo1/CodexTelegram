@@ -5,9 +5,10 @@ source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/common.sh"
 cd "$app_root"
 
 echo "Processes:"
-if [[ -f "$pid_file" ]] && kill -0 "$(cat "$pid_file")" >/dev/null 2>&1; then
-  ps -fp "$(cat "$pid_file")"
+if tracked_pid="$(get_tracked_bot_pid)"; then
+  ps -fp "$tracked_pid"
 else
+  rm -f "$pid_file"
   echo "Not running."
 fi
 
