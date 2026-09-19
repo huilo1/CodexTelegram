@@ -7,3 +7,10 @@ __pycache__/
 *.pyo
 *.pyd
 .DS_Store
+
+# Local credentials, tool permissions, and diagnostics
+.env.*
+!.env.example
+!.env.*.example
+.claude/settings.local.json
+*.log
