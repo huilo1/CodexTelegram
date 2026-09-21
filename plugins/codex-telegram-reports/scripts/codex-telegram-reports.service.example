@@ -1,0 +1,12 @@
+[Unit]
+Description=Codex Telegram project reports
+After=network-online.target
+
+[Service]
+ExecStart=%h/.codex-telegram-reports/venv/bin/codex-telegram-reports run
+Restart=on-failure
+RestartSec=15
+UMask=0077
+
+[Install]
+WantedBy=default.target

@@ -1,0 +1,33 @@
+name: Reports plugin
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        python: ['3.11', '3.14']
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: python -m pip install -r plugins/codex-telegram-reports/requirements.lock
+      - run: python -m pip install -e '.[dev]' -e plugins/codex-telegram-reports
+      - run: python -m pytest -q
+      - run: python scripts/check_release_secrets.py --history
+      - run: python scripts/build_reports_release.py
+      - uses: actions/upload-artifact@v4
+        if: matrix.python == '3.14'
+        with:
+          name: codex-telegram-reports-macos-beta
+          path: dist/codex-telegram-reports-*
+          if-no-files-found: error

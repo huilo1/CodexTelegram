@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "telegram-reports": {
+      "command": "python3",
+      "args": [
+        "-I",
+        "-c",
+        "import os, pathlib, sys; p = pathlib.Path(os.environ.get('CODEX_TELEGRAM_REPORTS_HOME', '~/.codex-telegram-reports')).expanduser() / 'venv' / 'bin' / 'python'; p.is_file() or sys.exit('Install Codex Telegram Reports runtime first: run scripts/install.py from the plugin directory'); os.execv(str(p), [str(p), '-I', '-m', 'codex_telegram_reports.cli', 'mcp'])"
+      ]
+    }
+  }
+}

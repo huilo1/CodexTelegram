@@ -1,0 +1,48 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 -I -c 'import os, pathlib, sys; p = pathlib.Path(os.environ.get('\"'\"'CODEX_TELEGRAM_REPORTS_HOME'\"'\"', '\"'\"'~/.codex-telegram-reports'\"'\"')).expanduser() / '\"'\"'venv'\"'\"' / '\"'\"'bin'\"'\"' / '\"'\"'python'\"'\"'; p.is_file() or (print('\"'\"'{}'\"'\"'), sys.exit(0)); os.execv(str(p), [str(p), '\"'\"'-I'\"'\"', '\"'\"'-m'\"'\"', '\"'\"'codex_telegram_reports.cli'\"'\"', '\"'\"'hook'\"'\"'])'",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 -I -c 'import os, pathlib, sys; p = pathlib.Path(os.environ.get('\"'\"'CODEX_TELEGRAM_REPORTS_HOME'\"'\"', '\"'\"'~/.codex-telegram-reports'\"'\"')).expanduser() / '\"'\"'venv'\"'\"' / '\"'\"'bin'\"'\"' / '\"'\"'python'\"'\"'; p.is_file() or (print('\"'\"'{}'\"'\"'), sys.exit(0)); os.execv(str(p), [str(p), '\"'\"'-I'\"'\"', '\"'\"'-m'\"'\"', '\"'\"'codex_telegram_reports.cli'\"'\"', '\"'\"'hook'\"'\"'])'",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 -I -c 'import os, pathlib, sys; p = pathlib.Path(os.environ.get('\"'\"'CODEX_TELEGRAM_REPORTS_HOME'\"'\"', '\"'\"'~/.codex-telegram-reports'\"'\"')).expanduser() / '\"'\"'venv'\"'\"' / '\"'\"'bin'\"'\"' / '\"'\"'python'\"'\"'; p.is_file() or (print('\"'\"'{}'\"'\"'), sys.exit(0)); os.execv(str(p), [str(p), '\"'\"'-I'\"'\"', '\"'\"'-m'\"'\"', '\"'\"'codex_telegram_reports.cli'\"'\"', '\"'\"'hook'\"'\"'])'",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "Interrupt": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 -I -c 'import os, pathlib, sys; p = pathlib.Path(os.environ.get('\"'\"'CODEX_TELEGRAM_REPORTS_HOME'\"'\"', '\"'\"'~/.codex-telegram-reports'\"'\"')).expanduser() / '\"'\"'venv'\"'\"' / '\"'\"'bin'\"'\"' / '\"'\"'python'\"'\"'; p.is_file() or (print('\"'\"'{}'\"'\"'), sys.exit(0)); os.execv(str(p), [str(p), '\"'\"'-I'\"'\"', '\"'\"'-m'\"'\"', '\"'\"'codex_telegram_reports.cli'\"'\"', '\"'\"'hook'\"'\"'])'",
+            "timeout": 3
+          }
+        ]
+      }
+    ]
+  }
+}

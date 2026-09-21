@@ -1,147 +1,87 @@
-# Codex Telegram Bot
+# Codex Telegram Reports · macOS beta
 
-Telegram bot that gives one approved chat remote access to the local `codex` CLI. It is modeled after `claude-code-telegram`, but built around `codex exec` and persisted Codex thread IDs.
+Отчёты о разработке из Codex в закрытой группе Telegram: **темы по проектам и рабочим копиям**.
+В теме можно уточнить статус, обсудить код и следующие шаги, запросить файл. Новые задачи и
+команды изменения проекта через Telegram не принимаются.
 
-## What This Project Ships
+Плагин работает на вашем Mac, через ваш отдельный Telegram-аккаунт и установленный
+Codex. Во время сна/выключения компьютера доставка и ответы откладываются.
 
-- Standalone Telegram bot runtime in `src/codex_telegram`
-- Repo-local Codex plugin in `plugins/codex-telegram`
-- Helper scripts for install/start/stop/status
-- `systemd` example service for persistent background operation
+## Перед установкой
 
-## Scope of this implementation
+- macOS, Git, Python 3.11+; команда `python3 --version` должна показывать 3.11 или новее.
+- Codex CLI 0.155.1 или новее, выполненный `codex login`. Проверено с 0.155.1.
+- Отдельный пользовательский Telegram-аккаунт для отправки и личный @username
+  для получения отчётов. BotFather и токен бота не используются.
+- **Ваши собственные `api_id` и `api_hash`**, полученные на
+  [my.telegram.org → API development tools](https://my.telegram.org).
+  Общих ключей и API-реквизитов разработчика в плагине нет. Они нужны и для QR-входа.
 
-- Plain-text Telegram chat interface for Codex
-- Persistent `thread_id` per chat using `codex exec resume`
-- Safe directory switching inside a single approved root
-- One acceptance message plus GIF loader while the task runs
-- Minimal command surface for manual operation: `/start`, `/help`, `/new`, `/status`, `/pwd`, `/cd`, `/cancel`
+## Установка
 
-## Requirements
+Скачайте исходники и запустите мастер локально в Терминале:
 
-- Python 3.11+
-- `codex` CLI installed and already authenticated
-- Telegram bot token from `@BotFather`
-- Target Telegram `chat_id`
-
-## Setup
-
-```bash
-cp .env.example .env
+```sh
+git clone https://github.com/huilo1/CodexTelegram.git
+cd CodexTelegram
+python3 plugins/codex-telegram-reports/scripts/setup.py --qr
 ```
 
-Create a Telegram bot token with `@BotFather`:
+Мастер проверит зависимости, установит runtime, запросит **ваши** API-реквизиты,
+предложит выбор проектов, вход Telegram и создание группы. Затем подключит плагин
+в Codex, запустит фоновую службу и предложит тестовый отчёт. Ключи, коды и пароль
+2FA вводите только в локальном Терминале. Для входа по номеру уберите `--qr`.
 
-1. Open Telegram and start a chat with `@BotFather`
-2. Run `/newbot`
-3. Choose a bot name
-4. Choose a unique bot username ending in `bot`
-5. Copy the token returned by BotFather
-6. Put that value into `TELEGRAM_BOT_TOKEN` inside `.env`
+Вступите в созданную группу по ссылке со своего личного аккаунта. Затем откройте
+новый разговор Codex и в `/hooks` проверьте и доверьте обработчики плагина:
+SessionStart, UserPromptSubmit, Stop, Interrupt. Мастер не меняет доверие вместо вас.
+Без этих обработчиков автоматические начало/итог работать не будут.
 
-To find your private `chat_id`, send any message to the bot after it starts, then inspect the latest update with:
+Для режима «только выбранные проекты» подключите нужную папку:
 
-```bash
-curl "https://api.telegram.org/bot<YOUR_TOKEN>/getUpdates"
+```sh
+python3 plugins/codex-telegram-reports/scripts/run.py project enable /absolute/path/to/project
+python3 plugins/codex-telegram-reports/scripts/run.py doctor --mcp
 ```
 
-Use the numeric `message.chat.id` value as `TELEGRAM_CHAT_ID`.
+Задайте обычную задачу в новом разговоре Codex. Отчёты появятся в теме проекта.
+Ответьте на отчёт вопросом: 👀 означает, что вопрос принят. `/status` показывает
+последние отчёты без вызова модели.
+`/full` раскрывает полный текст отчёта/ответа; `/file путь` или «пришли APK»
+отправляет готовый файл выбранной задачи. Для ролей Telega можно настроить
+отдельные темы clients/server/integration; [команды и лимиты](plugins/codex-telegram-reports/README.md).
 
-Fill at least:
+## Обновление
 
-```bash
-TELEGRAM_BOT_TOKEN=...
-TELEGRAM_CHAT_ID=...
-CODEX_ALLOWED_ROOT=/absolute/path/to/workspace
-CODEX_DEFAULT_CWD=/absolute/path/to/workspace
+Из сохранённого клона репозитория, после просмотра изменений:
+
+```sh
+git pull --ff-only
+python3 plugins/codex-telegram-reports/scripts/setup.py --update
 ```
 
-Install and run:
+Настройки, Telegram-сессия и история сохраняются. После обновления откройте новый
+разговор и проверьте доверие изменённых hooks. Каталог Codex называется `local-dev`;
+мастер подключает его из локального Git-клона, чтобы runtime и плагин брались из
+одних исходников. Повторный запуск мастера продолжает незавершённую настройку.
 
-```bash
-uv venv
-source .venv/bin/activate
-uv pip install -e '.[dev]'
-codex-telegram-bot
-```
+## Данные и ограничения
 
-Or run without activation:
+В Telegram отправляются статусы и последний публичный ответ Codex. Для уточнений
+модель может читать очищенный снимок исходников; выдержки кода могут попасть в
+ответ. Выберите подходящие проекты и прочитайте
+[описание данных и доступа](plugins/codex-telegram-reports/PRIVACY.md).
 
-```bash
-uv run codex-telegram-bot
-```
+Одна установка рассчитана на одного владельца и одну группу. Все участники
+Telegram-группы видят все темы. Поддержка Linux/Windows и постоянного облачного
+сервера не заявлена. Защищённые Python-скрипты для уточнений проверены на macOS.
 
-For a persistent background service, use [ops/codex-telegram.service.example](ops/codex-telegram.service.example) as a `systemd` template.
+- [Подробная настройка, команды, откат и удаление](plugins/codex-telegram-reports/README.md)
+- [Изменения версии](plugins/codex-telegram-reports/CHANGELOG.md)
+- [Сообщить об ошибке](https://github.com/huilo1/CodexTelegram/issues)
+- [Подготовка выпуска для разработчика](docs/RELEASING_REPORTS.md)
 
-## Plugin Usage
-
-This repository already includes a local Codex plugin wrapper:
-
-- [plugins/codex-telegram](plugins/codex-telegram)
-
-Plugin metadata lives in:
-
-- [plugin.json](plugins/codex-telegram/.codex-plugin/plugin.json)
-- [marketplace.json](.agents/plugins/marketplace.json)
-
-The plugin includes helper scripts:
-
-```bash
-./plugins/codex-telegram/scripts/install.sh
-./plugins/codex-telegram/scripts/start.sh
-./plugins/codex-telegram/scripts/status.sh
-./plugins/codex-telegram/scripts/stop.sh
-```
-
-If you want to use this plugin from another repository, see:
-
-- [plugins/codex-telegram/INSTALL_OTHER_PROJECT.md](plugins/codex-telegram/INSTALL_OTHER_PROJECT.md)
-
-## Run as a user service
-
-For persistent operation, install the provided `systemd` user unit:
-
-```bash
-mkdir -p ~/.config/systemd/user
-cp ops/codex-telegram.service.example ~/.config/systemd/user/codex-telegram.service
-systemctl --user daemon-reload
-systemctl --user enable --now codex-telegram.service
-```
-
-Useful commands:
-
-```bash
-systemctl --user status codex-telegram.service
-journalctl --user -u codex-telegram.service -f
-systemctl --user restart codex-telegram.service
-```
-
-If the bot must survive reboots even before you log in interactively, enable lingering once:
-
-```bash
-loginctl enable-linger "$USER"
-```
-
-The bundled unit assumes the repository lives at `~/projects/CodexTelegram` and uses `.venv/bin/codex-telegram-bot` with `--env-file .env`. Adjust `WorkingDirectory` and `ExecStart` if your checkout lives elsewhere.
-
-## Publish Checklist
-
-Before pushing this repository publicly:
-
-- rotate the Telegram bot token if it has been disclosed outside your secret store
-- confirm `.env` is ignored and not committed
-- replace placeholder author URLs or metadata if needed
-- verify the plugin README and `INSTALL_OTHER_PROJECT.md` match the intended public usage model
-
-## Notes
-
-- `/cd <dir>` resets the saved Codex thread because a Codex session is tied to its working directory.
-- `/cancel` stops the current Codex task for the configured chat.
-- The bot rejects messages from chats other than `TELEGRAM_CHAT_ID`.
-- If `TELEGRAM_CHAT_ID` is wrong, the bot now replies with an explicit configuration warning instead of failing silently.
-- `CODEX_ENABLE_WEB_SEARCH=true` enables live web search for Codex if your local CLI/config supports it.
-- `CODEX_SANDBOX=workspace-write` blocks network for shell commands; if Telegram tasks need downloads, HTTP requests, package installs, or git over network, use `CODEX_SANDBOX=danger-full-access` and start a new bot session.
-- The default loader GIF is `https://media.giphy.com/media/pY8jLmZw0ElqvVeRH4/giphy.gif`. Replace it with `CODEX_LOADER_GIF_URL` if needed.
-- Runtime logs are written both to stdout and `CODEX_LOG_FILE`.
-- Project memory for future Telegram sessions is stored in `docs/MEMORY.md` and `docs/TELEGRAM_HANDOFF.md`.
-- Repo-local plugin packaging now lives in `plugins/codex-telegram` with marketplace entry in `.agents/plugins/marketplace.json`.
+Новый плагин `plugins/codex-telegram-reports` распространяется по
+[MIT](plugins/codex-telegram-reports/LICENSE). Прежний бот удалённого управления
+сохранён отдельно; его инструкция — [LEGACY_BOT.md](docs/LEGACY_BOT.md).
+Новый мастер не устанавливает и не запускает legacy-бота.
